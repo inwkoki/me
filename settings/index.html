@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit — Steve</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12151A; --panel:#191D24; --ink:#E9EDF1; --muted:#8A93A3;
+    --teal:#4FD8C4; --amber:#E8A33D; --line:rgba(233,237,241,0.14);
+    --danger:#E8654F;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif; line-height:1.6;
+  }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  h1,h2{ font-family:'Space Grotesk', sans-serif; margin:0; }
+  :focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
+
+  /* ---- password gate ---- */
+  #gate{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  #gate .card{
+    width:100%; max-width:360px; background:var(--panel);
+    border:1px solid var(--line); border-radius:10px; padding:28px;
+  }
+  #gate h1{ font-size:1.3rem; margin-bottom:6px; }
+  #gate p{ color:var(--muted); font-size:0.88rem; margin:0 0 20px; }
+  #gate input{
+    width:100%; padding:10px 12px; background:var(--bg); color:var(--ink);
+    border:1px solid var(--line); border-radius:6px; font-size:0.95rem;
+    font-family:'IBM Plex Mono', monospace; margin-bottom:12px;
+  }
+  #gate button{
+    width:100%; padding:10px 12px; background:var(--teal); color:#0B0F14;
+    border:none; border-radius:6px; font-weight:600; cursor:pointer; font-size:0.95rem;
+  }
+  #gate .err{ color:var(--danger); font-size:0.85rem; margin-top:10px; min-height:1.2em; }
+
+  /* ---- editor ---- */
+  #editor{ display:none; max-width:760px; margin:0 auto; padding:48px 24px 100px; }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:0.75rem; color:var(--amber);
+    letter-spacing:0.06em; margin-bottom:8px;
+  }
+  #editor h1{ font-size:1.8rem; margin-bottom:8px; }
+  .note{ color:var(--muted); font-size:0.9rem; margin-bottom:36px; max-width:60ch; }
+  .field{ margin-bottom:22px; }
+  .field label{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:0.78rem;
+    color:var(--muted); margin-bottom:6px; letter-spacing:0.03em;
+  }
+  .field input[type=text], .field textarea{
+    width:100%; padding:10px 12px; background:var(--panel); color:var(--ink);
+    border:1px solid var(--line); border-radius:6px; font-size:0.95rem;
+    font-family:'IBM Plex Sans', sans-serif; resize:vertical;
+  }
+  .field textarea{ min-height:80px; }
+
+  .photo-row{ display:flex; align-items:center; gap:18px; margin-bottom:22px; }
+  .photo-preview{
+    width:72px; height:72px; border-radius:50%; overflow:hidden;
+    border:1px solid var(--line); background:var(--panel); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .photo-preview img{ width:100%; height:100%; object-fit:cover; }
+  .photo-preview span{ color:var(--muted); font-size:0.7rem; text-align:center; }
+  .photo-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+  .photo-actions label.btn, .photo-actions button{
+    font-family:'IBM Plex Mono', monospace; font-size:0.8rem;
+    border:1px solid var(--line); background:transparent; color:var(--ink);
+    padding:8px 12px; border-radius:6px; cursor:pointer;
+  }
+  .photo-actions input[type=file]{ display:none; }
+  .photo-actions button.remove{ color:var(--danger); border-color:rgba(232,101,79,0.4); }
+
+  .divider{ border-top:1px solid var(--line); margin:36px 0; }
+
+  .actions{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  #generateBtn{
+    background:var(--teal); color:#0B0F14; border:none; padding:12px 20px;
+    border-radius:6px; font-weight:600; cursor:pointer; font-size:0.95rem;
+  }
+  #status{ font-family:'IBM Plex Mono', monospace; font-size:0.82rem; color:var(--muted); }
+
+  #result{ display:none; margin-top:28px; }
+  #result h2{ font-size:1rem; margin-bottom:10px; }
+  #downloadLink{
+    display:inline-block; background:var(--amber); color:#0B0F14; text-decoration:none;
+    padding:10px 16px; border-radius:6px; font-weight:600; font-size:0.9rem; margin-right:10px;
+  }
+  #previewLink{
+    color:var(--teal); font-family:'IBM Plex Mono', monospace; font-size:0.85rem;
+  }
+  .howto{
+    margin-top:20px; padding:16px 18px; background:var(--panel);
+    border:1px solid var(--line); border-radius:8px; font-size:0.85rem; color:var(--muted);
+  }
+  .howto ol{ margin:8px 0 0; padding-left:20px; }
+  .howto li{ margin-bottom:6px; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="card">
+    <h1>Locked</h1>
+    <p>Enter the password to edit the page.</p>
+    <input type="password" id="pw" placeholder="Password" autofocus>
+    <button id="unlockBtn">Unlock</button>
+    <div class="err" id="pwErr"></div>
+  </div>
+</div>
+
+<div id="editor">
+  <div class="eyebrow mono">SETTINGS · NOT LINKED FROM THE SITE</div>
+  <h1>Edit your page</h1>
+  <p class="note">This edits the live <span class="mono">index.html</span> you're already hosting. Nothing saves automatically — you'll download an updated file at the end and upload it in place of the old one.</p>
+
+  <div class="photo-row">
+    <div class="photo-preview" id="photoPreview"><span>No<br>photo</span></div>
+    <div class="photo-actions">
+      <label class="btn" for="photoInput">Choose photo</label>
+      <input type="file" id="photoInput" accept="image/*">
+      <button type="button" class="remove" id="removePhotoBtn">Remove</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="f-location">LOCATION (top tag)</label>
+    <input type="text" id="f-location">
+  </div>
+  <div class="field">
+    <label for="f-heading">HEADING</label>
+    <input type="text" id="f-heading">
+  </div>
+  <div class="field">
+    <label for="f-bio1">BIO — PARAGRAPH 1</label>
+    <textarea id="f-bio1"></textarea>
+  </div>
+  <div class="field">
+    <label for="f-bio2">BIO — PARAGRAPH 2</label>
+    <textarea id="f-bio2"></textarea>
+  </div>
+  <div class="field">
+    <label for="f-muted">SMALL LINE (under bio)</label>
+    <input type="text" id="f-muted">
+  </div>
+  <div class="field">
+    <label for="f-fact1">FACT — FOCUS</label>
+    <input type="text" id="f-fact1">
+  </div>
+  <div class="field">
+    <label for="f-fact2">FACT — BUILDS</label>
+    <input type="text" id="f-fact2">
+  </div>
+  <div class="field">
+    <label for="f-fact3">FACT — TRAVEL</label>
+    <input type="text" id="f-fact3">
+  </div>
+  <div class="field">
+    <label for="f-email">CONTACT EMAIL</label>
+    <input type="text" id="f-email">
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="actions">
+    <button id="generateBtn">Generate updated page</button>
+    <span id="status"></span>
+  </div>
+
+  <div id="result">
+    <h2>Ready</h2>
+    <a id="downloadLink" download="index.html">Download index.html</a>
+    <a id="previewLink" href="#" target="_blank">Open preview in new tab →</a>
+    <div class="howto">
+      <strong>To make it live:</strong>
+      <ol>
+        <li>Download the file above.</li>
+        <li>Replace the old <span class="mono">index.html</span> on your host with this one (drag-and-drop on Netlify, or overwrite + push on GitHub, etc.) — leave this <span class="mono">settings</span> folder where it is.</li>
+        <li>Refresh your live site to confirm the changes.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- password gate ---
+  // Default password is "changeme". To set your own: open this file, and replace
+  // PASSWORD_HASH below with the SHA-256 hex digest of your chosen password.
+  // (In any browser console: crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword'))
+  //  then convert the buffer to hex — or just ask Claude to do it for you.)
+  const PASSWORD_HASH = "057ba03d6c44104863dc7361fe4578965d1887360f90a0895882e58a6248fc86";
+
+  async function sha256(text){
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  document.getElementById('unlockBtn').addEventListener('click', async () => {
+    const val = document.getElementById('pw').value;
+    const hash = await sha256(val);
+    if (hash === PASSWORD_HASH.trim()){
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('editor').style.display = 'block';
+      init();
+    } else {
+      document.getElementById('pwErr').textContent = 'Wrong password.';
+    }
+  });
+  document.getElementById('pw').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('unlockBtn').click();
+  });
+
+  // --- editor state ---
+  let rawHtml = '';
+  let photoDataUrl = null;
+
+  function getField(html, key){
+    const re = new RegExp('<!--F:' + key + '-->([\\s\\S]*?)<!--\\/F-->');
+    const m = html.match(re);
+    return m ? m[1] : '';
+  }
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  async function init(){
+    document.getElementById('status').textContent = 'Loading current page…';
+    try{
+      const res = await fetch('../index.html', { cache: 'no-store' });
+      if (!res.ok) throw new Error('fetch failed');
+      rawHtml = await res.text();
+    } catch(e){
+      document.getElementById('status').textContent =
+        'Could not load ../index.html — make sure this page is opened over http(s), next to your site, not as a local file.';
+      return;
+    }
+    document.getElementById('status').textContent = '';
+
+    document.getElementById('f-location').value = getField(rawHtml,'location');
+    document.getElementById('f-heading').value = getField(rawHtml,'heading');
+    document.getElementById('f-bio1').value = getField(rawHtml,'bio1');
+    document.getElementById('f-bio2').value = getField(rawHtml,'bio2');
+    document.getElementById('f-muted').value = getField(rawHtml,'muted');
+    document.getElementById('f-fact1').value = getField(rawHtml,'fact1');
+    document.getElementById('f-fact2').value = getField(rawHtml,'fact2');
+    document.getElementById('f-fact3').value = getField(rawHtml,'fact3');
+    document.getElementById('f-email').value = getField(rawHtml,'email');
+
+    const photoBlock = (rawHtml.match(/<!--PHOTO_START-->([\s\S]*?)<!--PHOTO_END-->/) || ['',''])[1];
+    const imgMatch = photoBlock.match(/src="([^"]+)"/);
+    if (imgMatch){
+      photoDataUrl = imgMatch[1];
+      renderPhotoPreview();
+    }
+  }
+
+  function renderPhotoPreview(){
+    const box = document.getElementById('photoPreview');
+    if (photoDataUrl){
+      box.innerHTML = '<img src="' + photoDataUrl + '" alt="preview">';
+    } else {
+      box.innerHTML = '<span>No<br>photo</span>';
+    }
+  }
+
+  document.getElementById('photoInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      img.onload = () => {
+        const maxW = 480;
+        const scale = Math.min(1, maxW / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        photoDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        renderPhotoPreview();
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('removePhotoBtn').addEventListener('click', () => {
+    photoDataUrl = null;
+    document.getElementById('photoInput').value = '';
+    renderPhotoPreview();
+  });
+
+  document.getElementById('generateBtn').addEventListener('click', () => {
+    let out = rawHtml;
+
+    const setField = (html, key, value) => {
+      const re = new RegExp('(<!--F:' + key + '-->)([\\s\\S]*?)(<!--\\/F-->)');
+      return html.replace(re, (m, a, b, c) => a + escapeHtml(value) + c);
+    };
+
+    out = setField(out, 'location', document.getElementById('f-location').value);
+    out = setField(out, 'heading', document.getElementById('f-heading').value);
+    out = setField(out, 'bio1', document.getElementById('f-bio1').value);
+    out = setField(out, 'bio2', document.getElementById('f-bio2').value);
+    out = setField(out, 'muted', document.getElementById('f-muted').value);
+    out = setField(out, 'fact1', document.getElementById('f-fact1').value);
+    out = setField(out, 'fact2', document.getElementById('f-fact2').value);
+    out = setField(out, 'fact3', document.getElementById('f-fact3').value);
+    const email = document.getElementById('f-email').value;
+    out = setField(out, 'email', email);
+    out = setField(out, 'email2', email);
+
+    const photoHtml = photoDataUrl
+      ? '<div class="photo"><img src="' + photoDataUrl + '" alt="Steve"></div>'
+      : '';
+    out = out.replace(/(<!--PHOTO_START-->)([\s\S]*?)(<!--PHOTO_END-->)/, (m,a,b,c) => a + photoHtml + c);
+
+    const blob = new Blob([out], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    document.getElementById('downloadLink').href = url;
+    document.getElementById('previewLink').href = url;
+    document.getElementById('result').style.display = 'block';
+    document.getElementById('status').textContent = '';
+  });
+</script>
+
+</body>
+</html>

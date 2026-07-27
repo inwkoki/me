@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steve</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12151A;
+    --ink: #E9EDF1;
+    --muted: #8A93A3;
+    --trace-teal: #4FD8C4;
+    --trace-amber: #E8A33D;
+    --line: rgba(233,237,241,0.12);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection{ background: var(--trace-teal); color:#0B0F14; }
+
+  :focus-visible{
+    outline: 2px solid var(--trace-teal);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  .mono{ font-family: 'IBM Plex Mono', monospace; }
+
+  main{
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 14vh 24px 10vh;
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--trace-amber);
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    margin-bottom: 26px;
+  }
+  .eyebrow .dot{
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--trace-teal);
+    animation: pulse 2.4s infinite;
+    flex-shrink:0;
+  }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(79,216,196,0.5); }
+    70%{ box-shadow: 0 0 0 6px rgba(79,216,196,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(79,216,196,0); }
+  }
+
+  .photo{
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    margin-bottom: 22px;
+  }
+  .photo img{ width:100%; height:100%; object-fit: cover; display:block; }
+
+  h1{
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.6rem, 8vw, 3.6rem);
+    line-height: 1;
+    margin: 0 0 28px;
+    letter-spacing: -0.01em;
+  }
+
+  .signature{ margin: 6px 0 40px; }
+  .signature svg{ display:block; width: 100%; height: auto; }
+  .trace-path{
+    fill:none;
+    stroke: var(--trace-teal);
+    stroke-width: 2.2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    stroke-dasharray: 2000;
+    stroke-dashoffset: 2000;
+    animation: draw 2.2s ease-out forwards;
+    opacity: 0.9;
+  }
+  .via{ fill: var(--trace-amber); }
+  @keyframes draw{ to{ stroke-dashoffset: 0; } }
+
+  @media (prefers-reduced-motion: reduce){
+    .trace-path{ animation:none; stroke-dashoffset:0; }
+    .eyebrow .dot{ animation:none; }
+  }
+
+  p{ margin: 0 0 20px; font-size: 1.05rem; color: var(--ink); }
+  p.muted{ color: var(--muted); }
+  p:last-of-type{ margin-bottom: 0; }
+
+  .facts{
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  .facts-row{
+    display:flex;
+    gap: 18px;
+    padding: 9px 0;
+    font-size: 0.9rem;
+  }
+  .facts-row .k{
+    font-family:'IBM Plex Mono', monospace;
+    color: var(--muted);
+    width: 100px;
+    flex-shrink:0;
+  }
+  .facts-row .v{ color: var(--ink); }
+
+  footer{
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 0.9rem;
+  }
+  footer a{
+    color: var(--trace-teal);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(79,216,196,0.35);
+  }
+  footer a:hover{ border-bottom-color: var(--trace-teal); }
+</style>
+</head>
+<body>
+
+<main>
+  <div class="eyebrow"><span class="dot"></span><!--F:location-->LOM KAO, THAILAND<!--/F--></div>
+
+  <!--PHOTO_START--><!--PHOTO_END-->
+
+  <h1><!--F:heading-->Hey, I'm Steve.<!--/F--></h1>
+
+  <div class="signature">
+    <svg viewBox="0 0 620 90" preserveAspectRatio="none" role="img" aria-label="A line that begins as a heartbeat waveform and resolves into a circuit trace">
+      <path class="trace-path" d="M0,45 L40,45 L48,32 L56,58 L64,20 L72,70 L80,45 L100,45
+        L108,38 L116,45 L160,45
+        L172,45 L172,20 L210,20 L210,68 L248,68 L248,32 L286,32 L286,58
+        L324,58 L350,58 L350,20 L420,20 L420,68 L470,68 L470,45 L620,45"/>
+      <circle class="via" cx="172" cy="20" r="3.2"/>
+      <circle class="via" cx="210" cy="68" r="3.2"/>
+      <circle class="via" cx="248" cy="32" r="3.2"/>
+      <circle class="via" cx="286" cy="58" r="3.2"/>
+      <circle class="via" cx="350" cy="20" r="3.2"/>
+      <circle class="via" cx="420" cy="68" r="3.2"/>
+    </svg>
+  </div>
+
+  <p><!--F:bio1-->I split my time between studying emergency medicine and building things that usually end up with wires hanging out of a project box — Zigbee networks, ESP32 boards, small web apps that solve one problem well.<!--/F--></p>
+
+  <p><!--F:bio2-->When I'm not doing either of those, I'm planning a trip to Japan with more precision than is strictly necessary, camera and tripod in tow. I've got one rule: an onsen town earns an overnight stay, never a same-day round trip.<!--/F--></p>
+
+  <p class="muted"><!--F:muted-->Based in the hills of Phetchabun, Thailand.<!--/F--></p>
+
+  <div class="facts mono">
+    <div class="facts-row"><span class="k">FOCUS</span><span class="v"><!--F:fact1-->Emergency medicine · EMS<!--/F--></span></div>
+    <div class="facts-row"><span class="k">BUILDS</span><span class="v"><!--F:fact2-->Hardware, web apps, home automation<!--/F--></span></div>
+    <div class="facts-row"><span class="k">TRAVEL</span><span class="v"><!--F:fact3-->Japan, onsen towns, kaiten sushi<!--/F--></span></div>
+  </div>
+
+  <footer>
+    Say hi — <a href="mailto:<!--F:email-->steve@example.com<!--/F-->"><!--F:email2-->steve@example.com<!--/F--></a>
+  </footer>
+</main>
+
+</body>
+</html>
